@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# OpenCL libs
+!OpenCL_Lab/include
+!OpenCL_Lab/lib
