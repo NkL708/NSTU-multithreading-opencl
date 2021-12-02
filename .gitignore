@@ -363,5 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # OpenCL libs
-!OpenCL_Lab/include
-!OpenCL_Lab/lib
+!OpenCL_Lab/include/*
+!OpenCL_Lab/lib/*
