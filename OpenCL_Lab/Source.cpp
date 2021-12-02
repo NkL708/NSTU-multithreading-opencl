@@ -3,21 +3,72 @@
 #include <fstream>
 #include <CL/cl.hpp>
 
-void fillCube(int** cube, int k, int m, int n)
+void fillCube(int*** cube, int k, int m, int n, int t1, int t2)
 {
+	for (int i = 0; i < k; i++)
+	{
+		for (int j = 0; j < m; j++)
+		{
+			for (int k = 0; k < n; k++)
+			{
+				if (i == 0) 
+				{
+					cube[i][j][k] = t1;
+					continue;
+				}
+				else if (i == (k - 1)) 
+				{
+					cube[i][j][k] = t2;
+					continue;
+				}
+				cube[i][j][k] = rand() % 100;
+			}
+		}
+	}
+}
 
+void printCube(int*** cube, int k, int m, int n, std::ofstream &file)
+{
+	for (int i = 0; i < k; i++)
+	{
+		for (int j = 0; j < m; j++)
+		{
+			for (int k = 0; k < n; k++)
+			{
+				if (!((k + 1) % 15))
+					file << std::endl;
+				file << cube[i][j][k] << " ";
+			}
+		}
+	}
+	file << std::endl << std::endl;
 }
 
 // cmd param - k, m, n, t1, t2
 
 int main(int argc, char* argv[])
 {
-	int k, m, n, t1, t2;
+	std::ofstream shuffledCube("shuffledCube.txt");
+	int k = 5, m = 5, n = 5, t1 = 10, t2 = 15;
+	int*** cube;
 	if (argc > 1)
 	{
-		k = atoi(argv[0]), m = atoi(argv[1]), n = atoi(argv[2]),
-			t1 = atoi(argv[3]), t2 = atoi(argv[5]);
+		k = atoi(argv[1]), m = atoi(argv[2]), n = atoi(argv[3]),
+			t1 = atoi(argv[4]), t2 = atoi(argv[5]);
 	}
+	// Linear
+	cube = new int**[k];
+	for (int i = 0; i < m; i++)
+	{
+		cube[i] = new int*[m];
+		for (int j = 0; j < n; j++)
+		{
+			cube[i][j] = new int[n];
+		}
+	}
+	fillCube(cube, k, m, n, t1, t2);
+	printCube(cube, k, m, n, shuffledCube);
+
 	// Init
 	cl_platform_id platform;
 	cl_device_id device;
@@ -47,7 +98,7 @@ int main(int argc, char* argv[])
 	// Start task
 	error |= clEnqueueNDRangeKernel(queue, kernel, 2, NULL, globalSize, localSize, 0, NULL, NULL);
 	// Read Result
-	int** result[1][1];
+	int*** result[1][1];
 	//error |= clEnqueueReadBuffer(queue, buffer, CL_TRUE, 0, sizeof(cl_uint) /*size of result*/, result, 0, NULL, NULL);
 	// End all work and free memory
 	clFinish(queue);
