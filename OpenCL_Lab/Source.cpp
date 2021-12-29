@@ -170,12 +170,13 @@ int main(int argc, char* argv[])
 	double durationL, durationP, time1, time2;
 	int k, m, n, temp1, temp2, size;
 	float* cuboid, * resL, * resP;
+	// max - 32
 	if (argc > 1) {
 		k = atoi(argv[1]), m = atoi(argv[2]), n = atoi(argv[3]),
 			temp1 = atoi(argv[4]), temp2 = atoi(argv[5]);
 	}
 	else {
-		k = 2, m = 2, n = 2, temp1 = 10, temp2 = 15;
+		k = 5, m = 5, n = 5, temp1 = 10, temp2 = 15;
 	}
 	size = k * m * n;
 	// Linear
@@ -202,6 +203,3 @@ int main(int argc, char* argv[])
 	filledFile.close(); resLFile.close(); resPFile.close();
 	return 0;
 }
-
-// barrier(CLK_LOCAL_MEM_FENCE)
-// cmd param - k, m, n, t1, t2
