@@ -18,7 +18,7 @@ void fillCuboid(float* cuboid, int k, int m, int n, int temp1, int temp2)
 	for (int z = 0; z < k; z++) {
 		for (int y = 0; y < m; y++) {
 			for (int x = 0; x < n; x++) {
-				int index = (z * k * m) + (y * m) + x;
+				int index = (z * m * n) + (y * n) + x;
 				if (z == 0) {
 					cuboid[index] = 0;
 				}	
@@ -41,7 +41,7 @@ void printCuboidToFile(float* cuboid, int k, int m, int n, std::ofstream &file)
 	for (int z = 0; z < k; z++) {
 		for (int y = 0; y < m; y++) {
 			for (int x = 0; x < n; x++) {
-				int index = (z * k * m) + (y * m) + x;
+				int index = (z * m * n) + (y * n) + x;
 				file << cuboid[index] << " ";
 			}
 			file << "\n";
@@ -72,7 +72,7 @@ float* distribute(float* cuboid, int k, int m, int n)
 			for (int y = 0; y < m; y++) {
 				for (int x = 0; x < n; x++) {
 					// Calc average temperature
-					int index = (z * k * m) + (y * m) + x;
+					int index = (z * m * n) + (y * n) + x;
 					float sum = 0;
 					int count = 0;
 					float average;
@@ -82,7 +82,7 @@ float* distribute(float* cuboid, int k, int m, int n)
 								if (zSum >= 0 && ySum >= 0 && xSum >= 0
 									&& zSum < k && ySum < m && xSum < n) {
 									count++;
-									sum += result[(zSum * k * m) + (ySum * m) + xSum];
+									sum += result[(zSum * m * n) + (ySum * n) + xSum];
 								}
 							}
 						}
@@ -121,9 +121,9 @@ float* distributeOpenCL(float* cuboid, int k, int m, int n)
 	cl_kernel kernel;
 	cl_command_queue queue;
 	cl_mem dCuboid, dRes;
-	size_t localSize[1] = { size };
+	size_t localSize[1] = { k * m };
 	// ceil(size / (float)localSize[0]) * localSize[0], ceil(size / (float)localSize[1]) * localSize[1]
-	size_t globalSize[1] = { size };
+	size_t globalSize[1] = { k * m };
 	// Get GPU
 	error |= clGetPlatformIDs(1, &platform, NULL);
 	error |= clGetDeviceIDs(platform, CL_DEVICE_TYPE_GPU, 1, &device, NULL);
@@ -175,7 +175,7 @@ int main(int argc, char* argv[])
 			temp1 = atoi(argv[4]), temp2 = atoi(argv[5]);
 	}
 	else {
-		k = 15, m = 15, n = 15, temp1 = 10, temp2 = 15;
+		k = 2, m = 2, n = 2, temp1 = 10, temp2 = 15;
 	}
 	size = k * m * n;
 	// Linear
